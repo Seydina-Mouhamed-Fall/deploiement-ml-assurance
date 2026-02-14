@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction des dépenses médicales | Insurance ML</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f0f14;
+            --bg-card: #1a1a24;
+            --accent: #00d4aa;
+            --accent-hover: #00f5c4;
+            --text: #e8e8ed;
+            --text-muted: #8888a0;
+            --border: #2a2a38;
+            --gradient: linear-gradient(135deg, #00d4aa 0%, #00a88a 100%);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-image: radial-gradient(ellipse at top, #1a2a2a 0%, #0f0f14 50%);
+        }
+        .container {
+            max-width: 540px;
+            width: 100%;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238888a0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        button {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            margin-top: 0.5rem;
+            border: none;
+            border-radius: 10px;
+            background: var(--gradient);
+            color: var(--bg-dark);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 212, 170, 0.35);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+        }
+        .result-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .error {
+            background: rgba(255, 90, 90, 0.1);
+            border-color: rgba(255, 90, 90, 0.3);
+        }
+        .error .result-value {
+            color: #ff5a5a;
+            font-size: 1rem;
+        }
+        .hidden {
+            display: none;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prédiction des dépenses médicales</h1>
+            <p class="subtitle">Modèle Random Forest · Dataset Insurance</p>
+        </header>
+        <div class="card">
+            <form id="predictForm">
+                <div class="form-group">
+                    <label for="age">Âge</label>
+                    <input type="number" id="age" name="age" min="18" max="64" value="30" required placeholder="18-64">
+                </div>
+                <div class="form-group">
+                    <label for="sex">Sexe</label>
+                    <select id="sex" name="sex" required>
+                        <option value="female">Femme</option>
+                        <option value="male" selected>Homme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bmi">IMC (Indice de masse corporelle)</label>
+                    <input type="number" id="bmi" name="bmi" min="15" max="55" step="0.1" value="28" required placeholder="ex: 28.5">
+                </div>
+                <div class="form-group">
+                    <label for="children">Nombre d'enfants</label>
+                    <input type="number" id="children" name="children" min="0" max="5" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="smoker">Fumeur</label>
+                    <select id="smoker" name="smoker" required>
+                        <option value="no" selected>Non</option>
+                        <option value="yes">Oui</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="region">Région</label>
+                    <select id="region" name="region" required>
+                        <option value="southwest">Southwest</option>
+                        <option value="southeast">Southeast</option>
+                        <option value="northwest">Northwest</option>
+                        <option value="northeast" selected>Northeast</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitBtn">Prédire les dépenses</button>
+            </form>
+            <div id="result" class="result hidden">
+                <div class="result-label">Dépenses prédites (USD)</div>
+                <div class="result-value" id="resultValue">—</div>
+            </div>
+        </div>
+        <footer>Modèle entraîné sur Insurance.csv · Random Forest (régression)</footer>
+    </div>
+    <script>
+        const form = document.getElementById('predictForm');
+        const resultDiv = document.getElementById('result');
+        const resultValue = document.getElementById('resultValue');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            resultDiv.classList.add('hidden');
+            resultDiv.classList.remove('error');
+
+            const formData = {
+                age: parseInt(form.age.value),
+                sex: form.sex.value,
+                bmi: parseFloat(form.bmi.value),
+                children: parseInt(form.children.value),
+                smoker: form.smoker.value,
+                region: form.region.value
+            };
+
+            try {
+                const res = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    resultValue.textContent = '$' + data.prediction.toLocaleString('en-US', {minimumFractionDigits: 2});
+                } else {
+                    resultDiv.classList.add('error');
+                    resultValue.textContent = data.error || 'Erreur de prédiction';
+                }
+            } catch (err) {
+                resultDiv.classList.add('error');
+                resultValue.textContent = 'Erreur réseau : ' + err.message;
+            }
+            resultDiv.classList.remove('hidden');
+            submitBtn.disabled = false;
+        });
+    </script>
+</body>
+</html>
