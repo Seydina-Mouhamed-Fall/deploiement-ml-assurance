@@ -3,41 +3,34 @@
 ## Étapes chronologiques pour lancer le serveur localement
 
 ### 1. Se placer dans le dossier du projet
-
 ```powershell
 cd "c:\Users\medme\Desktop\Machine Learning\ML_EXAM"
 ```
 
 ### 2. Créer et activer un environnement virtuel (recommandé)
-
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
 ### 3. Installer les dépendances
-
 ```powershell
 pip install -r requirements.txt
 ```
 
 ### 4. Exporter le modèle (créer model.pkl et columns.json)
-
 ```powershell
 python export_model.py
 ```
-
 > Si `best_model.joblib` existe (après exécution du notebook), il sera chargé et exporté en .pkl.  
 > Sinon, le script entraîne un Random Forest sur insurance.csv et crée model.pkl.
 
 ### 5. Lancer le serveur Flask
-
 ```powershell
 python app.py
 ```
 
 ### 6. Ouvrir l’application
-
 Ouvrir un navigateur et aller sur :  
 **http://127.0.0.1:5000**
 
@@ -61,14 +54,14 @@ ML_EXAM/
 
 ## Champs du formulaire
 
-| Champ   | Type   | Exemple                                    |
-| ------- | ------ | ------------------------------------------ |
-| Âge     | number | 18–64                                      |
-| Sexe    | select | male / female                              |
-| IMC     | number | 15–55 (ex: 28.5)                           |
-| Enfants | number | 0–5                                        |
-| Fumeur  | select | yes / no                                   |
-| Région  | select | northeast, northwest, southeast, southwest |
+| Champ     | Type    | Exemple        |
+|-----------|---------|----------------|
+| Âge       | number  | 18–64          |
+| Sexe      | select  | male / female  |
+| IMC       | number  | 15–55 (ex: 28.5) |
+| Enfants   | number  | 0–5            |
+| Fumeur    | select  | yes / no       |
+| Région    | select  | northeast, northwest, southeast, southwest |
 
 ## Résultat
 
@@ -76,29 +69,26 @@ La prédiction s’affiche en USD (ex : **$12 345.67**).
 
 ---
 
-                                            RERUN
+## Déploiement sur Vercel (Cloud)
 
-Procédure de redémarrage
+L'application est maintenant optimisée pour un déploiement cloud sur **Vercel**.
 
-1. Naviguer vers le bon dossier
-   Assure-toi que ton terminal pointe sur le répertoire exact contenant ton fichier app.py. S'il se trouve dans le sous-dossier de ton projet, déplace-toi :
+### 1. Prérequis
+- Avoir installé la [Vercel CLI](https://vercel.com/download) : `npm install -g vercel`
+- Un compte Vercel actif.
 
-PowerShell
+### 2. Lancer le déploiement
+À la racine du projet (`ML_EXAM`), exécutez :
+```powershell
+vercel --prod
+```
 
-cd "C:\Users\medme\Desktop\Machine Learning\ML_EXAM\deploy_model_regression" 2. Activer l'environnement virtuel (Étape critique)
-Rattache ton terminal à l'environnement isolé que tu as créé.
+### 3. Fichiers clés pour Vercel
+- **vercel.json** : Configure l'environnement Python et le routage des requêtes vers `app.py`.
+- **requirements.txt** : Liste les dépendances (Flask, pandas, scikit-learn, etc.) nécessaires au fonctionnement serverless.
+- **app.py** : L'objet `app` est exposé pour être utilisé par le bridge Vercel.
 
-PowerShell
-
-.\venv\Scripts\activate
-Vérification : Tu dois impérativement voir (venv) apparaître au début de ta ligne de commande.
-
-3. Lancer le serveur d'application
-   Exécute le script principal pour démarrer le moteur Flask.
-
-PowerShell
-
-python app.py 4. Accéder à l'interface utilisateur
-Le terminal va se bloquer et afficher une adresse d'écoute. Ouvre ton navigateur web (Chrome, Edge, etc.) et rends-toi à cette adresse locale :
-
-http://127.0.0.1:5000
+### 4. Avantages
+- **HTTPS automatique** : Sécurisation de l'accès.
+- **Scalabilité** : Gestion automatique du trafic.
+- **Disponibilité** : Votre modèle est accessible partout via une URL publique.

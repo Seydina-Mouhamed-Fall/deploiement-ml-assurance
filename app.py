@@ -11,7 +11,6 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
-
 # Chemins
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'model.pkl')
